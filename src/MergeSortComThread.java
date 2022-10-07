@@ -16,8 +16,20 @@ public class MergeSortComThread {
     private void sort(int ini, int fim) {
         if ((fim - ini) < 1) return;
         var meio = (fim + ini) / 2;
-        sort(ini, meio);
-        sort(meio + 1, fim);
+        var t1 = new Thread(() -> sort(ini, meio));
+        t1.start();
+        var t2 = new Thread(() -> sort(meio + 1, fim));
+        t2.start();
+        try {
+            t1.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            t2.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         merge(ini, meio, fim);
     }
 
@@ -50,12 +62,12 @@ public class MergeSortComThread {
         for (int i = 0; i < f; i++) {
             v[i] = (int) Math.round(Math.random() * 7 * f);
         }
-        //System.out.println(Arrays.toString(v));
+        System.out.println(Arrays.toString(v));
         var ms = new MergeSort();
         long a = System.currentTimeMillis();
         ms.sort(v);
         long b = System.currentTimeMillis();
-        //System.out.println(Arrays.toString(v));
+        System.out.println(Arrays.toString(v));
         System.out.println(b - a);
 
     }
